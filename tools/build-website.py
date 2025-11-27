@@ -578,7 +578,7 @@ def main():
     args = parser.parse_args()
     
     # 读取配置文件
-    site_url = 'https://www.arknovel1.xyz'  # 默认正确域名
+    site_url = 'https://www.2opennovel.xyz'  # 默认正确域名
     site_config = {}
     config_file = 'config.json'
     if os.path.exists(config_file):

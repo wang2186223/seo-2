@@ -606,9 +606,9 @@ function manualCleanupDuplicates() {
 function testPageVisit() {
   const testData = {
     eventType: 'page_visit',
-    page: 'https://www.arknovel1.xyz/novels/test/chapter-1',
+    page: 'https://www.2opennovel.xyz/novels/test/chapter-1',
     userAgent: 'Mozilla/5.0 (iPhone; Test)',
-    referrer: 'https://www.arknovel1.xyz/novels/test/index',
+    referrer: 'https://www.2opennovel.xyz/novels/test/index',
     userIP: '127.0.0.1'
   };
   
@@ -622,9 +622,9 @@ function testPageVisit() {
 function testAdGuide() {
   const testData = {
     eventType: 'ad_guide_triggered',
-    page: 'https://www.arknovel1.xyz/novels/test/chapter-1',
+    page: 'https://www.2opennovel.xyz/novels/test/chapter-1',
     userAgent: 'Mozilla/5.0 (iPhone; Test)',
-    referrer: 'https://www.arknovel1.xyz/novels/test/index',
+    referrer: 'https://www.2opennovel.xyz/novels/test/index',
     userIP: '127.0.0.1',
     totalAdsSeen: 15,
     currentPageAds: 3,
@@ -742,7 +742,7 @@ function testAdClick() {
     eventType: 'ad_click',
     novel: 'Test Novel',
     chapter: '1',
-    pageUrl: 'https://www.arknovel1.xyz/novels/test/chapter-1',
+    pageUrl: 'https://www.2opennovel.xyz/novels/test/chapter-1',
     adSlot: 'div-gpt-ad-1762511964282-0',
     adPosition: '850',
     scrollDepth: '500',
