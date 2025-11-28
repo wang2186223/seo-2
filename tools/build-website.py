@@ -273,13 +273,15 @@ class WebsiteBuilder:
                     'url': f"/novels/{novel_data['slug']}/chapter-{chapters[i+1]['number']}"
                 }
                 
-            # 准备所有章节列表（用于目录）
+            # 准备所有章节列表（用于目录）- 优化：只传必要信息
             all_chapters = []
+            novel_slug = novel_data['slug']
+            total_chapters = len(chapters)
             for ch in chapters:
                 all_chapters.append({
                     'number': ch['number'],
                     'title': ch['title'],
-                    'url': f"/novels/{novel_data['slug']}/chapter-{ch['number']}"
+                    'url': f"/novels/{novel_slug}/chapter-{ch['number']}"
                 })
             
             # 获取时间戳信息
@@ -299,13 +301,15 @@ class WebsiteBuilder:
                     'author': novel_data['author'],
                     'cover_url': self.get_cover_url(novel_data),
                     'url': f"/novels/{novel_data['slug']}/",
+                    'slug': novel_data['slug'],
+                    'total_chapters': total_chapters,
                     'chapters': all_chapters,
                     'tags': novel_data['tags']
                 },
                 timestamps=timestamps,
                 prev_chapter=prev_chapter,
                 next_chapter=next_chapter,
-                canonical_url=f"{self.site_url}/novels/{novel_data['slug']}/chapter-{chapter['number']}.html",
+                canonical_url=f"{self.site_url}/novels/{novel_data['slug']}/chapter-{chapter['number']}",
                 site_url=self.site_url,
                 site=self.config.get('site', {})
             )
@@ -501,12 +505,16 @@ class WebsiteBuilder:
             # 只添加前10个章节到sitemap中，减少文件大小
             chapters_to_include = novel_data['chapters'][:10]  # 只取前10个章节
             for chapter in chapters_to_include:
-                chapter_url = f"novels/{novel_data['slug']}/chapter-{chapter['number']}.html"
+                # 去掉.html后缀，使用cleanURL
+                chapter_url = f"novels/{novel_data['slug']}/chapter-{chapter['number']}"
                 self.add_url_to_sitemap(urlset, chapter_url, priority='0.6', changefreq='monthly')
                 
         # 保存站点地图
         tree = ET.ElementTree(urlset)
         sitemap_file = self.output_path / 'sitemap.xml'
+        
+        # 格式化XML输出
+        self._indent(urlset)
         tree.write(str(sitemap_file), encoding='utf-8', xml_declaration=True)
         print(f"生成站点地图: {sitemap_file}")
         
@@ -529,14 +537,10 @@ class WebsiteBuilder:
             file_path = self.output_path / path
         
         if file_path.exists():
-            # 使用文件的创建时间
+            # 使用文件的修改时间（对SEO更有意义）
             stat_result = file_path.stat()
-            # 在macOS上使用st_birthtime获取创建时间，在其他系统上回退到st_ctime
-            if hasattr(stat_result, 'st_birthtime'):
-                ctime = stat_result.st_birthtime
-            else:
-                ctime = stat_result.st_ctime
-            lastmod.text = datetime.fromtimestamp(ctime).strftime('%Y-%m-%d')
+            mtime = stat_result.st_mtime
+            lastmod.text = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d')
         else:
             # 如果文件不存在，使用当前时间
             lastmod.text = datetime.now().strftime('%Y-%m-%d')
@@ -546,6 +550,22 @@ class WebsiteBuilder:
         
         priority_elem = ET.SubElement(url_elem, 'priority')
         priority_elem.text = priority
+    
+    def _indent(self, elem, level=0):
+        """格式化XML元素，使其具有良好的缩进"""
+        i = "\n" + level * "  "
+        if len(elem):
+            if not elem.text or not elem.text.strip():
+                elem.text = i + "  "
+            if not elem.tail or not elem.tail.strip():
+                elem.tail = i
+            for child in elem:
+                self._indent(child, level + 1)
+            if not child.tail or not child.tail.strip():
+                child.tail = i
+        else:
+            if level and (not elem.tail or not elem.tail.strip()):
+                elem.tail = i
         
     def copy_static_assets(self):
         """复制静态资源"""
@@ -578,7 +598,7 @@ def main():
     args = parser.parse_args()
     
     # 读取配置文件
-    site_url = 'https://www.2opennovel.xyz'  # 默认正确域名
+    site_url = 'https://www.arknovel1.xyz'  # 默认正确域名
     site_config = {}
     config_file = 'config.json'
     if os.path.exists(config_file):

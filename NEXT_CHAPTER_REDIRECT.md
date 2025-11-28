@@ -20,8 +20,8 @@
   "site": {
     "name": "NovelVibe",
     "description": "Free Werewolf Novels for American Women",
-    "url": "https://www.2opennovel.xyz",
-    "next_chapter_domain": "https://www.2opennovel.xyz",
+    "url": "https://www.arknovel1.xyz",
+    "next_chapter_domain": "https://www.xixifreenovel.com",
     "language": "en-US",
     "author": "NovelVibe Team"
   }
@@ -54,12 +54,12 @@ git push
 
 ### 当前域名示例
 ```
-https://www.2opennovel.xyz/novels/the-last-spirit-wolf/chapter-1.html
+https://www.arknovel1.xyz/novels/the-last-spirit-wolf/chapter-1.html
 ```
 
 ### 点击 Next 后跳转
 ```
-https://www.2opennovel.xyz/novels/the-last-spirit-wolf/chapter-2.html
+https://www.xixifreenovel.com/novels/the-last-spirit-wolf/chapter-2.html
 ```
 
 **关键点：**

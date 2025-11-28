@@ -1,7 +1,7 @@
 // Google Apps Script 代码 - 网站访问统计系统(每日独立表格版本)
 // 主控制表格 ID: 1cEMYvW2XSo28ejNGKDUT3EEJDrar_zYStIhNqToso0c
-// 部署ID: AKfycbzCh1631pZE0Wt5HrT1lbLhOtE3CFxXFX_DpwmJB3QZ73eN8nHGISvxALbAygqfnUTT
-// 部署URL: https://script.google.com/macros/s/AKfycbzCh1631pZE0Wt5HrT1lbLhOtE3CFxXFX_DpwmJB3QZ73eN8nHGISvxALbAygqfnUTT/exec
+// 部署ID: AKfycbyF5Vot_R9Rq_hoZmcPeK_-2rY9tPphz9jLsru1KX7z-krv7-LIJ90fFHSJ0tNJbPQX
+// 部署URL: https://script.google.com/macros/s/AKfycbyF5Vot_R9Rq_hoZmcPeK_-2rY9tPphz9jLsru1KX7z-krv7-LIJ90fFHSJ0tNJbPQX/exec
 // 
 // 架构说明：
 // - 主表格：用于控制台、统计汇总、表格索引
@@ -148,16 +148,17 @@ function initializeDailySpreadsheet(spreadsheet, dateString) {
   
   // 创建"页面访问"sheet
   const visitSheet = spreadsheet.insertSheet('页面访问');
-  visitSheet.getRange(1, 1, 1, 5).setValues([
-    ['时间', '访问页面', '用户属性', 'IP地址', '用户来源']
+  visitSheet.getRange(1, 1, 1, 6).setValues([
+    ['时间', '访问页面', '用户属性', 'IP地址', '用户来源分类', '完整来源URL']
   ]);
-  const visitHeader = visitSheet.getRange(1, 1, 1, 5);
+  const visitHeader = visitSheet.getRange(1, 1, 1, 6);
   visitHeader.setBackground('#4285f4').setFontColor('white').setFontWeight('bold');
-  visitSheet.setColumnWidth(1, 150);
-  visitSheet.setColumnWidth(2, 300);
-  visitSheet.setColumnWidth(3, 200);
-  visitSheet.setColumnWidth(4, 120);
-  visitSheet.setColumnWidth(5, 250);
+  visitSheet.setColumnWidth(1, 150);  // 时间
+  visitSheet.setColumnWidth(2, 300);  // 访问页面
+  visitSheet.setColumnWidth(3, 200);  // 用户属性
+  visitSheet.setColumnWidth(4, 120);  // IP地址
+  visitSheet.setColumnWidth(5, 250);  // 用户来源分类
+  visitSheet.setColumnWidth(6, 400);  // 完整来源URL
   
   // 创建"广告引导"sheet
   const adGuideSheet = spreadsheet.insertSheet('广告引导');
@@ -311,11 +312,12 @@ function handlePageVisitEvent(dailySpreadsheet, data) {
   }
   
   const rowData = [
-    getTimeString(),              // 时间
-    data.page || '',              // 访问页面
-    data.userAgent || '',         // 用户属性
-    data.userIP || 'Unknown',     // IP地址
-    data.referrer || 'Direct'     // 用户来源
+    getTimeString(),                        // 时间
+    data.page || '',                        // 访问页面
+    data.userAgent || '',                   // 用户属性
+    data.userIP || 'Unknown',               // IP地址
+    data.referrer || 'Direct',              // 用户来源分类
+    data.referrerUrl || 'Direct/None'       // 完整来源URL
   ];
   
   visitSheet.appendRow(rowData);
@@ -606,9 +608,10 @@ function manualCleanupDuplicates() {
 function testPageVisit() {
   const testData = {
     eventType: 'page_visit',
-    page: 'https://www.2opennovel.xyz/novels/test/chapter-1',
+    page: 'https://www.arknovel1.xyz/novels/test/chapter-1',
     userAgent: 'Mozilla/5.0 (iPhone; Test)',
-    referrer: 'https://www.2opennovel.xyz/novels/test/index',
+    referrer: 'Organic: Google Search',
+    referrerUrl: 'https://www.google.com/search?q=werewolf+novels',
     userIP: '127.0.0.1'
   };
   
@@ -622,9 +625,9 @@ function testPageVisit() {
 function testAdGuide() {
   const testData = {
     eventType: 'ad_guide_triggered',
-    page: 'https://www.2opennovel.xyz/novels/test/chapter-1',
+    page: 'https://www.arknovel1.xyz/novels/test/chapter-1',
     userAgent: 'Mozilla/5.0 (iPhone; Test)',
-    referrer: 'https://www.2opennovel.xyz/novels/test/index',
+    referrer: 'https://www.arknovel1.xyz/novels/test/index',
     userIP: '127.0.0.1',
     totalAdsSeen: 15,
     currentPageAds: 3,
@@ -742,7 +745,7 @@ function testAdClick() {
     eventType: 'ad_click',
     novel: 'Test Novel',
     chapter: '1',
-    pageUrl: 'https://www.2opennovel.xyz/novels/test/chapter-1',
+    pageUrl: 'https://www.arknovel1.xyz/novels/test/chapter-1',
     adSlot: 'div-gpt-ad-1762511964282-0',
     adPosition: '850',
     scrollDepth: '500',
