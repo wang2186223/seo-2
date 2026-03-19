@@ -665,14 +665,30 @@
         <div class="container">
             <h1 class="chapter-title">{{ chapter.title if chapter.title else 'Chapter ' + chapter.number|string }}</h1>
             <div class="content font-medium">
-                {% for paragraph in chapter.content.split('\n') %}
-                {% if paragraph.strip() %}
-                <p>{{ paragraph.strip() }}</p>
+                {% set ns = namespace(paragraphs=[]) %}
+                {% for p in chapter.content.split('\n') %}
+                {% if p.strip() %}
+                {% set _ = ns.paragraphs.append(p.strip()) %}
+                {% endif %}
+                {% endfor %}
+                {% set total_paragraphs = ns.paragraphs|length %}
+                {% set middle_position = (total_paragraphs // 2)|int %}
+                {% for paragraph in ns.paragraphs %}
+                <p>{{ paragraph }}</p>
                 {% if loop.index == 1 %}
                 <!-- AdSense In-Article Ad after first paragraph -->
                 <ins class="3b35b82f" data-key="6162a031dd06b6e30a645caf7c8a49d6"></ins>
                 <script async src="https://aj1047.online/194c03ba.js"></script>
                 {% endif %}
+                {% if loop.index == middle_position and middle_position > 1 %}
+                <!-- AdSense In-Article Ad in the middle -->
+                <ins class="3b35b82f" data-key="6162a031dd06b6e30a645caf7c8a49d6"></ins>
+                <script async src="https://aj1047.online/194c03ba.js"></script>
+                {% endif %}
+                {% if loop.last %}
+                <!-- AdSense In-Article Ad after last paragraph -->
+                <ins class="3b35b82f" data-key="6162a031dd06b6e30a645caf7c8a49d6"></ins>
+                <script async src="https://aj1047.online/194c03ba.js"></script>
                 {% endif %}
                 {% endfor %}
             </div>
